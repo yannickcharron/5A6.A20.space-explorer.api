@@ -1,5 +1,9 @@
 import express from 'express';
 
+import errors from './helpers/errors.js';
+
+import planetsRoutes from './routes/planetsRoutes.js';
+
 const app = express();
 
 //http://localhost:5600/premiere
@@ -25,24 +29,40 @@ app.get('/somme2', (req, res, next) => {
 
 });
 
-app.get('/:operation', (req, res, next) => {
+/*app.get('/:operation', (req, res, next) => {
 
     const operation = req.params.operation;
 
-    let resultat = 0;
+    let result = 0;
 
-    //Operation = somme (+)
-    //            difference (-)    
-    //            produit (*)
-    //            quotient (/)
-    //            reste (%)
-
-    console.log(operation);
+    switch(operation) {
+        case 'somme':
+            result = a+b;
+            break;
+        case 'difference':
+            result = a-b;
+            break;
+        case 'produit':
+            result = a*b;
+            break;
+        case 'quotient':
+            result = a/b;
+            break;
+        case 'reste':
+            result = a%b;
+            break;
+    }
 
     res.status(200);
     res.set('Content-Type', 'text/html');
-    res.send(`<html><strong>${resultat}</strong></html>`);
+    res.send(`<html><strong>${result}</strong></html>`);
 
-});
+});*/
+
+app.use('/', planetsRoutes); // Ajout des routes présentes dans PlanetsRoutes dans notre serveur
+
+
+
+errors(app);
 
 export default app;
