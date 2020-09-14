@@ -6,6 +6,8 @@ import planetsRoutes from './routes/planetsRoutes.js';
 
 const app = express();
 
+app.use(express.json());
+
 //http://localhost:5600/premiere
 app.get('/premiere', (req, res, next) => {
 
@@ -59,8 +61,8 @@ app.get('/somme2', (req, res, next) => {
 
 });*/
 
-app.use('/', planetsRoutes); // Ajout des routes présentes dans PlanetsRoutes dans notre serveur
-
+app.use('/planets', planetsRoutes); // Ajout des routes présentes dans PlanetsRoutes dans notre serveur
+//TODO: Ajouter les routes elements
 
 
 errors(app);

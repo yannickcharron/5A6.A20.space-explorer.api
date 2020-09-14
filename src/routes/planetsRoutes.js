@@ -16,15 +16,12 @@ class PlanetsRoutes {
 
     constructor() {
         
-        router.get('/planets', this.getAll);
-        router.get('/planets/:idPlanet', this.getOne);
-
-        //CRUD
-        // POST = INSERT = Create
-        // GET = SELECT = Retrieve
-        // PUT = UPDATE = Update
-        // DELETE = DELETE = Delete
-        // PATCH = UPDATE Partiel = Update
+        router.get('/', this.getAll); // GET = SELECT sans Where = Retrieve
+        router.get('/:idPlanet', this.getOne); // GET = SELECT avec Where = Retrieve
+        router.post('/', this.post);  // POST = INSERT = Create
+        router.put('/:idPlanet', this.put); // PUT = UPDATE = Update
+        router.patch('/:idPlanet', this.patch); // PATCH = UPDATE Partiel = Update
+        router.delete('/:idPlanet', this.delete); // DELETE = DELETE = Delete
 
     }
 
@@ -48,6 +45,46 @@ class PlanetsRoutes {
             return next(error.NotFound(`La planète avec l'identifiant ${req.params.idPlanet} n'existe pas.`));
         }
 
+    }
+
+    post(req, res, next) {
+
+        console.log(req.body);
+        
+        const bodyLength = Object.keys(req.body).length;
+        if(bodyLength > 0) {
+            //Plein de valiation à faire mais pas le temps
+            const index = planets.findIndex(p => p.id === req.body.id);
+            if(index === -1) {
+                //On peut ajouter la nouvelle planet
+                planets.push(req.body);
+                res.status(201).json(req.body);
+            } else {
+                return next(error.Conflict(`Une planète avec l'identifiant ${req.body.id} existe déjà.`));
+            }
+        } else {
+            return next(error.BadRequest('Le corps de la requête est vide.'));
+        }
+
+        
+    }
+
+    put(req, res, next) {
+        return next(error.NotImplemented('La méthode PUT n\'est pas disponible sur cette ressource.'));
+    }
+
+    patch(req, res, next) {
+        return next(error.NotImplemented('La méthode PATCH n\'est pas disponible sur cette ressource.'));
+    }
+
+    delete(req, res, next) {
+
+        const index = planets.findIndex(p => p.id === parseInt(req.params.idPlanet, 10));
+        if(index === -1) {
+            return next(error.NotFound(`La planet avec l'identifiant ${req.params.idPlanet} - n'existe pas.`))
+        } 
+        planets.splice(index, 1);
+        res.status(204).end();
     }
 
 }
