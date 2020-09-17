@@ -1,10 +1,15 @@
 import express from 'express';
 
+import database from './helpers/database.js';
 import errors from './helpers/errors.js';
 
 import planetsRoutes from './routes/planetsRoutes.js';
+import elementsRoutes from './routes/elementsRoutes.js';
+import experimentsRoutes from './routes/experimentsRoutes.js';
 
 const app = express();
+
+database(app);
 
 app.use(express.json());
 
@@ -61,7 +66,9 @@ app.get('/somme2', (req, res, next) => {
 
 });*/
 
+app.use('/experiments', experimentsRoutes);
 app.use('/planets', planetsRoutes); // Ajout des routes présentes dans PlanetsRoutes dans notre serveur
+app.use('/elements', elementsRoutes);
 //TODO: Ajouter les routes elements
 
 
