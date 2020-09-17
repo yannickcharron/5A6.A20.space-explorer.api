@@ -3,7 +3,7 @@ import chalk from 'chalk';
 
 export default app => {
 
-    const url = 'mongodb+srv://spaceExplorerAdmin:A123456@spaceexplorer.e8sfz.mongodb.net/space-explorer?retryWrites=true&w=majority';
+    const url = 'todo';
     console.log(url);
     console.log(chalk.green(`[MONGO] - Establish new connection with url: ${url}`));
     mongoose.Promise = global.Promise;
