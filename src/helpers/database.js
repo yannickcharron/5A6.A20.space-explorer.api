@@ -3,7 +3,7 @@ import chalk from 'chalk';
 
 export default app => {
 
-    const url = 'todo';
+    const url = process.env.DATABASE;
     console.log(url);
     console.log(chalk.green(`[MONGO] - Establish new connection with url: ${url}`));
     mongoose.Promise = global.Promise;

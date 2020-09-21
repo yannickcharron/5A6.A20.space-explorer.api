@@ -1,15 +1,14 @@
 import express from 'express';
 import error from 'http-errors';
 
-import Planet from '../models/planet.js';
+import planetsService from '../services/planetsService.js';
 
 const router = express.Router();
-
 
 class PlanetsRoutes {
 
     constructor() {
-        
+
         router.get('/', this.getAll); // GET = SELECT sans Where = Retrieve
         router.get('/:idPlanet', this.getOne); // GET = SELECT avec Where = Retrieve
         router.post('/', this.post);  // POST = INSERT = Create
@@ -21,26 +20,66 @@ class PlanetsRoutes {
 
     async getAll(req, res, next) {
 
-        try {
-            const planets = await Planet.find();
-            res.status(200).json(planets);
-        } catch(err) {
-            return next(error.InternalServerError());
+
+        const transformOptions = {};
+
+        //est-ce que j'ai ?unit dans URL
+        if(req.query.unit) {
+            const unit = req.query.unit;
+            if (unit === 'c') {
+                transformOptions.unit = unit;
+            } else {
+                return next(error.BadRequest()); // Erreur 400
+            }
         }
-        
+
+        try {
+            const planets = await planetsService.retrieve();
+
+            const tranformPlanets = planets.map(p => {
+                p = p.toObject({ getter: false, virtual: true });
+                p = planetsService.transform(p, transformOptions);
+
+                return p;
+            });
+            
+            res.status(200).json(tranformPlanets);
+        } catch (err) {
+            return next(error.InternalServerError(err));
+        }
+
     }
 
-    getOne(req, res, next) {
-        
-        
+    async getOne(req, res, next) {
+
+        const transformOptions = {};
+
+        //est-ce que j'ai ?unit dans URL
+        if(req.query.unit) {
+            const unit = req.query.unit;
+            if (unit === 'c') {
+                transformOptions.unit = unit;
+            } else {
+                return next(error.BadRequest()); // Erreur 400
+            }
+        }
+
+        try {
+            let planet = await planetsService.retriveById(req.params.idPlanet);
+            planet = planet.toObject({ getter: false, virtual: true });
+            planet = planetsService.transform(planet, transformOptions);
+            res.status(200).json(planet);
+        } catch(err) {
+            return next(error.InternalServerError(err));
+        }
 
     }
 
     post(req, res, next) {
 
-       
 
-        
+
+
     }
 
     put(req, res, next) {
@@ -53,7 +92,7 @@ class PlanetsRoutes {
 
     delete(req, res, next) {
 
-        
+
     }
 
 }

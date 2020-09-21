@@ -21,6 +21,7 @@
   "homepage": "https://github.com/yannickcharron/5A6.A20.space-explorer.api#readme",
   "dependencies": {
     "chalk": "^4.1.0",
+    "dotenv-flow": "^3.2.0",
     "express": "^4.17.1",
     "http-errors": "^1.8.0",
     "mongoose": "^5.10.5"
