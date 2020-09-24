@@ -5,12 +5,16 @@ const ZERO_KELVIN = -273.15;
 class PlanetsService {
     //CRUD
 
-    async retrieve() {
-        return await Planet.find();
+    retrieveByCriteria(filter) {
+        return Planet.find(filter);
     }
 
-    async retriveById(planetId) {
-        return await Planet.findById(planetId);
+    retriveById(planetId) {
+        return Planet.findById(planetId);
+    }
+
+    create(planet) {
+        return Planet.create(planet);
     }
 
     transform(planet, transformOptions = {}) {

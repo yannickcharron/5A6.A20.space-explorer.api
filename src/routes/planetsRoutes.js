@@ -20,8 +20,13 @@ class PlanetsRoutes {
 
     async getAll(req, res, next) {
 
-
+        const filter = {};
         const transformOptions = {};
+
+        // query = ?
+        if(req.query.explorer) {
+            filter.discoveredBy = req.query.explorer;
+        }
 
         //est-ce que j'ai ?unit dans URL
         if(req.query.unit) {
@@ -34,7 +39,7 @@ class PlanetsRoutes {
         }
 
         try {
-            const planets = await planetsService.retrieve();
+            const planets = await planetsService.retrieveByCriteria(filter);
 
             const tranformPlanets = planets.map(p => {
                 p = p.toObject({ getter: false, virtual: true });
@@ -75,8 +80,39 @@ class PlanetsRoutes {
 
     }
 
-    post(req, res, next) {
+    async post(req, res, next) {
 
+        if(!req.body) {
+            return next(error.BadRequest()); //Erreur 400, 415
+        }
+
+        //TODO: Validation à faire ici soit par moongoose ou par nous même
+
+        try {
+            let planetAdded = await planetsService.create(req.body);
+            planetAdded = planetAdded.toObject({ getter: false, virtual: true });
+            planetAdded = planetsService.transform(planetAdded);
+
+            res.header('Location', planetAdded.href);
+
+            if(req.query._body === 'false') {
+                res.status(201).end();
+            } else {
+                res.status(201).json(planetAdded);
+            }
+
+        } catch(err) {
+            //Gestion des erreurs Mongo
+            if(err.name === 'MongoError') {
+                switch(err.code) {
+                    case 11000:
+                        return next(error.Conflict(err)); //409
+                }
+            } else if(err.message.includes('Planet validation')) {
+                return next(error.PreconditionFailed(err));
+            }
+            return next(error.InternalServerError(err));
+        }
 
 
 

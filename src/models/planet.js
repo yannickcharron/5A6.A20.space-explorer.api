@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 
 const planetSchema = mongoose.Schema({
-    name: { type: String, unique: true },
-    'discovered-by': { type: String, index: true },
-    'discovery-date': Date,
+    name: { type: String, unique: true, required:true },
+    discoveredBy: { type: String, index: true },
+    discoveryDate: Date,
     temperature: Number,
     satellites: [String],
     position: {
