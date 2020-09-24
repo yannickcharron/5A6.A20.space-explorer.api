@@ -17,10 +17,16 @@ class PlanetsService {
         return Planet.create(planet);
     }
 
+    async update(planetId, planet) {
+        const filter = { _id: planetId };
+        await Planet.findOneAndUpdate(filter, planet); //Retourne la planète avant la mise à jour
+        return Planet.findOne(filter);
+    }
+
     transform(planet, transformOptions = {}) {
 
         //Transformation de la planète
-        if(transformOptions.unit === 'c') {
+        if (transformOptions.unit === 'c') {
             planet.temperature = this.convertToCelsius(planet.temperature);
         }
 

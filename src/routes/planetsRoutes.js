@@ -102,7 +102,8 @@ class PlanetsRoutes {
             }
 
         } catch(err) {
-            //Gestion des erreurs Mongo
+            console.log(err);
+            /*//Gestion des erreurs Mongo
             if(err.name === 'MongoError') {
                 switch(err.code) {
                     case 11000:
@@ -110,16 +111,36 @@ class PlanetsRoutes {
                 }
             } else if(err.message.includes('Planet validation')) {
                 return next(error.PreconditionFailed(err));
+            }*/
+            return next(error.InternalServerError(err));
+        }
+
+    }
+
+    async put(req, res, next) {
+        
+        if(!req.body) {
+            return next(error.BadRequest());
+        }
+
+        //TODO: L'objet doit être complet dans le body
+
+        try {
+
+            let planet = await planetsService.update(req.params.idPlanet, req.body);
+            
+            if(req.query._body === 'false') {
+                res.status(200).end();
+            } else {
+                planet = planet.toObject({ getter: false, virtual: true });
+                planet = planetsService.transform(planet);
+                res.status(200).json(planet);
             }
+        } catch(err) {
             return next(error.InternalServerError(err));
         }
 
 
-
-    }
-
-    put(req, res, next) {
-        return next(error.NotImplemented('La méthode PUT n\'est pas disponible sur cette ressource.'));
     }
 
     patch(req, res, next) {

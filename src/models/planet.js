@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import mongodbErrorHandler from 'mongoose-mongodb-errors';
 
 const planetSchema = mongoose.Schema({
     name: { type: String, unique: true, required:true },
@@ -14,5 +15,7 @@ const planetSchema = mongoose.Schema({
 },{
     collection:'planets'
 });
+
+//planetSchema.plugin(mongodbErrorHandler);
 
 export default mongoose.model('Planet', planetSchema);
