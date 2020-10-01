@@ -50,7 +50,7 @@ class PlanetsRoutes {
             
             res.status(200).json(tranformPlanets);
         } catch (err) {
-            return next(error.InternalServerError(err));
+            return next(err);
         }
 
     }
@@ -71,6 +71,10 @@ class PlanetsRoutes {
 
         try {
             let planet = await planetsService.retriveById(req.params.idPlanet);
+            //TODO:ICI ne pas oublier
+            if(!planet) {
+                return next(error.NotFound(`La planète avec l'identifiant ${req.params.idPlanet} n'existe pas.`));
+            }
             planet = planet.toObject({ getter: false, virtual: true });
             planet = planetsService.transform(planet, transformOptions);
             res.status(200).json(planet);
@@ -102,17 +106,7 @@ class PlanetsRoutes {
             }
 
         } catch(err) {
-            console.log(err);
-            /*//Gestion des erreurs Mongo
-            if(err.name === 'MongoError') {
-                switch(err.code) {
-                    case 11000:
-                        return next(error.Conflict(err)); //409
-                }
-            } else if(err.message.includes('Planet validation')) {
-                return next(error.PreconditionFailed(err));
-            }*/
-            return next(error.InternalServerError(err));
+            return next(err);
         }
 
     }
