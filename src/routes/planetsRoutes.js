@@ -1,5 +1,6 @@
 import express from 'express';
 import error from 'http-errors';
+import _ from 'lodash';
 
 import planetsService from '../services/planetsService.js';
 
@@ -24,12 +25,12 @@ class PlanetsRoutes {
         const transformOptions = {};
 
         // query = ?
-        if(req.query.explorer) {
+        if (req.query.explorer) {
             filter.discoveredBy = req.query.explorer;
         }
 
         //est-ce que j'ai ?unit dans URL
-        if(req.query.unit) {
+        if (req.query.unit) {
             const unit = req.query.unit;
             if (unit === 'c') {
                 transformOptions.unit = unit;
@@ -47,7 +48,7 @@ class PlanetsRoutes {
 
                 return p;
             });
-            
+
             res.status(200).json(tranformPlanets);
         } catch (err) {
             return next(err);
@@ -57,10 +58,11 @@ class PlanetsRoutes {
 
     async getOne(req, res, next) {
 
-        const transformOptions = {};
+        const transformOptions = { embed: {} };
+        const retrieveOptions = {}
 
         //est-ce que j'ai ?unit dans URL
-        if(req.query.unit) {
+        if (req.query.unit) {
             const unit = req.query.unit;
             if (unit === 'c') {
                 transformOptions.unit = unit;
@@ -69,16 +71,24 @@ class PlanetsRoutes {
             }
         }
 
+        if (req.query.embed === 'explorations') {
+            retrieveOptions.explorations = true;
+            transformOptions.embed.explorations = true;
+        }
+
+
+
         try {
-            let planet = await planetsService.retriveById(req.params.idPlanet);
+            let planet = await planetsService.retriveById(req.params.idPlanet, retrieveOptions);
+            console.log(planet);
             //TODO:ICI ne pas oublier
-            if(!planet) {
+            if (!planet) {
                 return next(error.NotFound(`La planète avec l'identifiant ${req.params.idPlanet} n'existe pas.`));
             }
             planet = planet.toObject({ getter: false, virtual: true });
             planet = planetsService.transform(planet, transformOptions);
             res.status(200).json(planet);
-        } catch(err) {
+        } catch (err) {
             return next(error.InternalServerError(err));
         }
 
@@ -86,7 +96,7 @@ class PlanetsRoutes {
 
     async post(req, res, next) {
 
-        if(!req.body) {
+        if (_.isEmpty(req.body)) { //Retourne vrai sur {}
             return next(error.BadRequest()); //Erreur 400, 415
         }
 
@@ -99,21 +109,21 @@ class PlanetsRoutes {
 
             res.header('Location', planetAdded.href);
 
-            if(req.query._body === 'false') {
+            if (req.query._body === 'false') {
                 res.status(201).end();
             } else {
                 res.status(201).json(planetAdded);
             }
 
-        } catch(err) {
+        } catch (err) {
             return next(err);
         }
 
     }
 
     async put(req, res, next) {
-        
-        if(!req.body) {
+
+        if (!req.body) {
             return next(error.BadRequest());
         }
 
@@ -122,15 +132,15 @@ class PlanetsRoutes {
         try {
 
             let planet = await planetsService.update(req.params.idPlanet, req.body);
-            
-            if(req.query._body === 'false') {
+
+            if (req.query._body === 'false') {
                 res.status(200).end();
             } else {
                 planet = planet.toObject({ getter: false, virtual: true });
                 planet = planetsService.transform(planet);
                 res.status(200).json(planet);
             }
-        } catch(err) {
+        } catch (err) {
             return next(error.InternalServerError(err));
         }
 

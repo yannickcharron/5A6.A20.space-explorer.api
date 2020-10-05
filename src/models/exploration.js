@@ -13,11 +13,12 @@ const explorationSchema = mongoose.Schema({
     },
     scans: [{
         element: String,
-        percent: Number
+        percent: Number,
+        id: false
     }],
     comment: String
 }, {
-    collection: 'explorations'
+    collection: 'explorations', id:false
 });
 
 export default mongoose.model('Exploration', explorationSchema);

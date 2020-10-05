@@ -25,6 +25,7 @@
     "express": "^4.17.1",
     "express-paginate": "^1.0.2",
     "http-errors": "^1.8.0",
+    "lodash": "^4.17.20",
     "mongoose": "^5.10.5",
     "mongoose-mongodb-errors": "0.0.2"
   }

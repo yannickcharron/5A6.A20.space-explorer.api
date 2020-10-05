@@ -9,8 +9,16 @@ class PlanetsService {
         return Planet.find(filter);
     }
 
-    retriveById(planetId) {
-        return Planet.findById(planetId);
+    retriveById(planetId, retrieveOptions) {
+
+        const retrieveQuery = Planet.findById(planetId);
+
+        if (retrieveOptions.explorations) {
+            console.log('test');
+            retrieveQuery.populate('explorations');
+        }
+
+        return retrieveQuery;
     }
 
     create(planet) {
@@ -36,10 +44,22 @@ class PlanetsService {
         //Linking
         planet.href = `${process.env.BASE_URL}/planets/${planet._id}`;
 
+        //Transform des explorations
+        if (transformOptions.embed.explorations) {
+
+            planet.explorations = planet.explorations.map(e => {
+
+                e.href = `${process.env.BASE_URL}/explorations/${e._id}`;
+                e.planet = { href: planet.href };
+
+                return e;
+
+            });
+
+        }
+
         delete planet._id;
         delete planet.__v;
-
-
 
         return planet;
     }

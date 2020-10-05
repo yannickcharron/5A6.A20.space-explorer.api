@@ -12,7 +12,14 @@ const planetSchema = mongoose.Schema({
         z: { type: Number, min: -1000, max: 1000 }
     }
 }, {
-    collection: 'planets'
+    collection: 'planets', id:false
+});
+
+planetSchema.virtual('explorations', {
+    ref:'Exploration',
+    localField:'_id',
+    foreignField: 'planet',
+    justOne:false
 });
 
 
