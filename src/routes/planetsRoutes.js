@@ -85,7 +85,7 @@ class PlanetsRoutes {
             if (!planet) {
                 return next(error.NotFound(`La planète avec l'identifiant ${req.params.idPlanet} n'existe pas.`));
             }
-            planet = planet.toObject({ getter: false, virtual: true });
+            planet = planet.toObject({ getter: false, virtuals: true });
             planet = planetsService.transform(planet, transformOptions);
             res.status(200).json(planet);
         } catch (err) {

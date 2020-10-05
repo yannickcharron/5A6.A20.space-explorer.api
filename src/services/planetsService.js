@@ -45,18 +45,21 @@ class PlanetsService {
         planet.href = `${process.env.BASE_URL}/planets/${planet._id}`;
 
         //Transform des explorations
-        if (transformOptions.embed.explorations) {
+        if(transformOptions.embed) {
+            if (transformOptions.embed.explorations) {
 
-            planet.explorations = planet.explorations.map(e => {
-
-                e.href = `${process.env.BASE_URL}/explorations/${e._id}`;
-                e.planet = { href: planet.href };
-
-                return e;
-
-            });
-
+                planet.explorations = planet.explorations.map(e => {
+    
+                    e.href = `${process.env.BASE_URL}/explorations/${e._id}`;
+                    e.planet = { href: planet.href };
+    
+                    return e;
+    
+                });
+    
+            }
         }
+        
 
         delete planet._id;
         delete planet.__v;
